@@ -21,6 +21,7 @@ namespace SpaceAdventureAPI
         public DbSet<Planet> Planets { get; set; }
         public DbSet<Banner> Banners { get; set; }
         public DbSet<Message> Messages { get; set; }
+        public DbSet<Newsletter> Newsletters { get; set; }
 
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
