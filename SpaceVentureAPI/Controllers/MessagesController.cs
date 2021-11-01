@@ -6,52 +6,53 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using SpaceAdventureAPI;
+using SpaceVentureAPI;
 
-namespace SpaceAdventureAPI.Controllers
+namespace SpaceVentureAPI.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class PlanetsController : ControllerBase
+    public class MessagesController : ControllerBase
     {
         private readonly SpaceVentureContext _context;
 
-        public PlanetsController(SpaceVentureContext context)
+        public MessagesController(SpaceVentureContext context)
         {
             _context = context;
         }
 
-        // GET: api/Planets
+        // GET: api/Messages
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Planet>>> GetPlanet()
+        public async Task<ActionResult<IEnumerable<Message>>> GetMessage()
         {
-            return await _context.Planets.Include(e => e.Trips).ToListAsync();
+            return await _context.Messages.ToListAsync();
         }
 
-        // GET: api/Planets/5
+        // GET: api/Messages/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<Planet>> GetPlanet(int id)
+        public async Task<ActionResult<Message>> GetMessage(int id)
         {
-            var planet = await _context.Planets.Include(e => e.Trips).SingleOrDefaultAsync(e => e.Id == id);
+            var message = await _context.Messages.FindAsync(id);
 
-            if (planet == null)
+            if (message == null)
             {
                 return NotFound();
             }
 
-            return planet;
+            return message;
         }
 
-        // PUT: api/Planets/5
+        // PUT: api/Messages/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutPlanet(int id, Planet planet)
+        public async Task<IActionResult> PutMessage(int id, Message message)
         {
-            if (id != planet.Id)
+            if (id != message.Id)
             {
                 return BadRequest();
             }
 
-            _context.Entry(planet).State = EntityState.Modified;
+            _context.Entry(message).State = EntityState.Modified;
 
             try
             {
@@ -59,7 +60,7 @@ namespace SpaceAdventureAPI.Controllers
             }
             catch (DbUpdateConcurrencyException)
             {
-                if (!PlanetExists(id))
+                if (!MessageExists(id))
                 {
                     return NotFound();
                 }
@@ -72,36 +73,36 @@ namespace SpaceAdventureAPI.Controllers
             return NoContent();
         }
 
-        // POST: api/Planets
+        // POST: api/Messages
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
-        public async Task<ActionResult<Planet>> PostPlanet(Planet planet)
+        public async Task<ActionResult<Message>> PostMessage(Message message)
         {
-            _context.Planets.Add(planet);
+            _context.Messages.Add(message);
             await _context.SaveChangesAsync();
 
-            return CreatedAtAction("GetPlanet", new { id = planet.Id }, planet);
+            return CreatedAtAction("GetMessage", new { id = message.Id }, message);
         }
 
-        // DELETE: api/Planets/5
+        // DELETE: api/Messages/5
         [HttpDelete("{id}")]
-        public async Task<IActionResult> DeletePlanet(int id)
+        public async Task<IActionResult> DeleteMessage(int id)
         {
-            var planet = await _context.Planets.FindAsync(id);
-            if (planet == null)
+            var message = await _context.Messages.FindAsync(id);
+            if (message == null)
             {
                 return NotFound();
             }
 
-            _context.Planets.Remove(planet);
+            _context.Messages.Remove(message);
             await _context.SaveChangesAsync();
 
             return NoContent();
         }
 
-        private bool PlanetExists(int id)
+        private bool MessageExists(int id)
         {
-            return _context.Planets.Any(e => e.Id == id);
+            return _context.Messages.Any(e => e.Id == id);
         }
     }
 }

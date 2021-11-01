@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using SpaceAdventureAPI;
+using SpaceVentureAPI;
 
 namespace SpaceAdventureAPI
 {
@@ -17,12 +18,17 @@ namespace SpaceAdventureAPI
         public DbSet<Slider> Sliders { get; set; }
         public DbSet<TeamMember> TeamMembers { get; set; }
         public DbSet<Trip> Trips { get; set; }
+        public DbSet<Planet> Planets { get; set; }
+        public DbSet<Banner> Banners { get; set; }
+        public DbSet<Message> Messages { get; set; }
+
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
             optionsBuilder.UseSqlite("datasource=SpaceVenture.db");
         }
 
-        public DbSet<SpaceAdventureAPI.Planet> Planet { get; set; }
+
+
     }
 }
