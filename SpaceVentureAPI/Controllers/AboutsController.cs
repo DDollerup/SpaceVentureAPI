@@ -2,10 +2,10 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using SpaceAdventureAPI;
 
 namespace SpaceAdventureAPI.Controllers
 {
@@ -14,10 +14,12 @@ namespace SpaceAdventureAPI.Controllers
     public class AboutsController : ControllerBase
     {
         private readonly SpaceVentureContext _context;
+        private readonly IWebHostEnvironment _env;
 
-        public AboutsController(SpaceVentureContext context)
+        public AboutsController(SpaceVentureContext context, IWebHostEnvironment env)
         {
             _context = context;
+            _env = env;
         }
 
         // GET: api/Abouts
@@ -51,6 +53,12 @@ namespace SpaceAdventureAPI.Controllers
                 return BadRequest();
             }
 
+            if (Tools.IsBase64String(about.Image))
+            {
+                Tools.DeleteFile(_env.WebRootPath, _context.Abouts.AsNoTracking().FirstOrDefault(e => e.Id == id).Image);
+                about.Image = HttpContext.Request.Scheme + "://" + HttpContext.Request.Host.Value + "/" + Tools.ConvertBase64ToFile(about.Image, _env.WebRootPath);
+            }
+
             _context.Entry(about).State = EntityState.Modified;
 
             try
@@ -77,6 +85,10 @@ namespace SpaceAdventureAPI.Controllers
         [HttpPost]
         public async Task<ActionResult<About>> PostAbout(About about)
         {
+            if (Tools.IsBase64String(about.Image))
+            {
+                about.Image = HttpContext.Request.Scheme + "://" + HttpContext.Request.Host.Value + "/" + Tools.ConvertBase64ToFile(about.Image, _env.WebRootPath);
+            }
             _context.Abouts.Add(about);
             await _context.SaveChangesAsync();
 
